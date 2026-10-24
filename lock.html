@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLock - Educational Screen Lock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        accent: '#f59e0b',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .question-card {
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            transform: scale(1.02);
+        }
+        .lock-screen {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .subject-card {
+            transition: all 0.3s ease;
+        }
+        .subject-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .curriculum-item {
+            transition: all 0.2s ease;
+        }
+        .curriculum-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .topic-card {
+            transition: all 0.2s ease;
+        }
+        .topic-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        .subject-header {
+            transition: all 0.3s ease;
+        }
+        .subject-header:hover {
+            transform: scale(1.02);
+        }
+        .score-indicator {
+            transition: all 0.3s ease;
+        }
+        .score-high {
+            color: #ef4444;
+            animation: pulseRed 1s infinite;
+        }
+        .score-medium {
+            color: #f59e0b;
+        }
+        .score-low {
+            color: #22c55e;
+        }
+        @keyframes pulseRed {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .knowledge-form {
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .knowledge-form:hover {
+            transform: translateY(-5px);
+        }
+        /* Custom animation for alphabet photo */
+        .alphabet-photo {
+            position: relative;
+            display: inline-block;
+            perspective: 1000px;
+        }
+        
+        .alphabet-letter {
+            font-size: 4rem;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            animation: rotateAnimation 10s infinite linear;
+        }
+        
+        .alphabet-letter:nth-child(1) { animation-delay: 0s; }
+        .alphabet-letter:nth-child(2) { animation-delay: 0.5s; }
+        .alphabet-letter:nth-child(3) { animation-delay: 1s; }
+        .alphabet-letter:nth-child(4) { animation-delay: 1.5s; }
+        .alphabet-letter:nth-child(5) { animation-delay: 2s; }
+        .alphabet-letter:nth-child(6) { animation-delay: 2.5s; }
+        .alphabet-letter:nth-child(7) { animation-delay: 3s; }
+        .alphabet-letter:nth-child(8) { animation-delay: 3.5s; }
+        .alphabet-letter:nth-child(9) { animation-delay: 4s; }
+        .alphabet-letter:nth-child(10) { animation-delay: 4.5s; }
+        .alphabet-letter:nth-child(11) { animation-delay: 5s; }
+        .alphabet-letter:nth-child(12) { animation-delay: 5.5s; }
+        .alphabet-letter:nth-child(13) { animation-delay: 6s; }
+        .alphabet-letter:nth-child(14) { animation-delay: 6.5s; }
+        .alphabet-letter:nth-child(15) { animation-delay: 7s; }
+        .alphabet-letter:nth-child(16) { animation-delay: 7.5s; }
+        .alphabet-letter:nth-child(17) { animation-delay: 8s; }
+        .alphabet-letter:nth-child(18) { animation-delay: 8.5s; }
+        .alphabet-letter:nth-child(19) { animation-delay: 9s; }
+        .alphabet-letter:nth-child(20) { animation-delay: 9.5s; }
+        .alphabet-letter:nth-child(21) { animation-delay: 10s; }
+        .alphabet-letter:nth-child(22) { animation-delay: 10.5s; }
+        .alphabet-letter:nth-child(23) { animation-delay: 11s; }
+        .alphabet-letter:nth-child(24) { animation-delay: 11.5s; }
+        .alphabet-letter:nth-child(25) { animation-delay: 12s; }
+        .alphabet-letter:nth-child(26) { animation-delay: 12.5s; }
+        
+        @keyframes rotateAnimation {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            100% { transform: rotateY(360deg) rotateX(360deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header Navigation -->
+    <nav class="bg-dark/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-lock text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold">EduLock</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="showScreen('home')" class="hover:text-primary transition-colors">Home</button>
+                    <button onclick="showScreen('build')" class="hover:text-primary transition-colors">Build Guide</button>
+                    <button onclick="showScreen('practice')" class="hover:text-primary transition-colors">Practice</button>
+                    <button onclick="showScreen('settings')" class="hover:text-primary transition-colors">Settings</button>
+                    <button onclick="showScreen('curriculum')" class="hover:text-primary transition-colors">Curriculum</button>
+                    <button onclick="showScreen('score')" class="hover:text-primary transition-colors">Score Tracker</button>
+                </div>
+                <button class="md:hidden">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6">
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="lock-screen">
+            <div class="text-center py-12">
+                <div class="mb-8">
+                    <div class="w-24 h-24 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 pulse">
+                        <i class="fas fa-lock text-4xl"></i>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">EduLock - Educational Screen Lock</h1>
+                    <p class="text-gray-300 max-w-2xl mx-auto text-lg">
+                        Unlock your device by solving educational questions. Master your subjects while securing your device!
+                    </p>
+                </div>
+
+                <!-- Alphabet Photo Display -->
+                <div class="my-12">
+                    <div class="alphabet-photo">
+                        <div class="alphabet-letter float-animation" style="color: #3b82f6;">E</div>
+                        <div class="alphabet-letter float-animation" style="color: #1e40af;">D</div>
+                        <div class="alphabet-letter float-animation" style="color: #f59e0b;">U</div>
+                        <div class="alphabet-letter float-animation" style="color: #ef4444;">L</div>
+                        <div class="alphabet-letter float-animation" style="color: #22c55e;">O</div>
+                        <div class="alphabet-letter float-animation" style="color: #8b5cf6;">C</div>
+                        <div class="alphabet-letter float-animation" style="color: #f97316;">K</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-primary transition-all">
+                        <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-book text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Subject Based</h3>
+                        <p class="text-gray-300">Solve questions from various engineering subjects including Mathematics, Physics, Chemistry</p>
+                    </div>
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-primary transition-all">
+                        <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-brain text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Smart Learning</h3>
+                        <p class="text-gray-300">Get questions based on your current studies and progress</p>
+                    </div>
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-primary transition-all">
+                        <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-shield-alt text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Secure Lock</h3>
+                        <p class="text-gray-300">Emergency unlock with backup PIN for critical situations</p>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <button onclick="showScreen('build')" class="bg-primary hover:bg-secondary text-white font-bold py-3 px-8 rounded-lg text-lg transition-all transform hover:scale-105">
+                        Build Your App Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Curriculum Screen -->
+        <div id="curriculum-screen" class="hidden">
+            <div class="py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Engineering Curriculum Guide</h2>
+                    <div class="flex space-x-4">
+                        <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Select Your Program</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button onclick="selectProgram('btech-cse')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-laptop-code text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech CSE</h4>
+                                    <p class="text-sm text-gray-300">Computer Science & Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-aiml')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-robot text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech AI/ML</h4>
+                                    <p class="text-sm text-gray-300">Artificial Intelligence & Machine Learning</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-ece')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-microchip text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech ECE</h4>
+                                    <p class="text-sm text-gray-300">Electronics & Communication Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-mech')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-tools text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Mech</h4>
+                                    <p class="text-sm text-gray-300">Mechanical Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-civil')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-hard-hat text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Civil</h4>
+                                    <p class="text-sm text-gray-300">Civil Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-ee')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-bolt text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech EE</h4>
+                                    <p class="text-sm text-gray-300">Electrical Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-chem')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-pink-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-atom text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Chemical</h4>
+                                    <p class="text-sm text-gray-300">Chemical Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-mme')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-industry text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Metallurgical</h4>
+                                    <p class="text-sm text-gray-300">Metallurgical Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <!-- Additional B.Tech branches -->
+                        <button onclick="selectProgram('btech-biotech')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-dna text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Biotechnology</h4>
+                                    <p class="text-sm text-gray-300">Biotechnology Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-aero')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-plane text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Aerospace</h4>
+                                    <p class="text-sm text-gray-300">Aerospace Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-mining')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-mountain text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Mining</h4>
+                                    <p class="text-sm text-gray-300">Mining Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-petroleum')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-oil-can text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Petroleum</h4>
+                                    <p class="text-sm text-gray-300">Petroleum Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-environ')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-tree text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Environmental</h4>
+                                    <p class="text-sm text-gray-300">Environmental Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-material')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-cube text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Materials</h4>
+                                    <p class="text-sm text-gray-300">Materials Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-food')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-utensils text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Food</h4>
+                                    <p class="text-sm text-gray-300">Food Technology</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="selectProgram('btech-architecture')" class="subject-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-building text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">B.Tech Architecture</h4>
+                                    <p class="text-sm text-gray-300">Architecture Engineering</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Curriculum Display Area -->
+                <div id="curriculum-display" class="hidden">
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                        <h3 class="text-2xl font-bold mb-6" id="program-title">B.Tech Computer Science & Engineering</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Year 1 -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4 flex items-center">
+                                    <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">1</span>
+                                    First Year Curriculum
+                                </h4>
+                                <div class="ml-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Mathematics I</h5>
+                                        <p class="text-sm text-gray-300">Calculus, Differential Equations, Linear Algebra</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Physics</h5>
+                                        <p class="text-sm text-gray-300">Mechanics, Waves, Thermodynamics</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Chemistry</h5>
+                                        <p class="text-sm text-gray-300">Atomic Structure, Chemical Bonding, Organic Chemistry</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Engineering Graphics</h5>
+                                        <p class="text-sm text-gray-300">Technical Drawing, CAD, Projections</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Year 2 -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4 flex items-center">
+                                    <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">2</span>
+                                    Second Year Curriculum
+                                </h4>
+                                <div class="ml-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Mathematics II</h5>
+                                        <p class="text-sm text-gray-300">Probability, Statistics, Vector Calculus</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Physics Lab</h5>
+                                        <p class="text-sm text-gray-300">Laboratory experiments and measurements</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Programming Fundamentals</h5>
+                                        <p class="text-sm text-gray-300">C Programming, Data Structures</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Digital Electronics</h5>
+                                        <p class="text-sm text-gray-300">Logic Gates, Combinational Circuits</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Year 3 -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4 flex items-center">
+                                    <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">3</span>
+                                    Third Year Curriculum
+                                </h4>
+                                <div class="ml-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Data Structures & Algorithms</h5>
+                                        <p class="text-sm text-gray-300">Trees, Graphs, Sorting Techniques</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Database Management Systems</h5>
+                                        <p class="text-sm text-gray-300">SQL, Normalization, Transactions</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Operating Systems</h5>
+                                        <p class="text-sm text-gray-300">Process Management, Memory Allocation</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Computer Networks</h5>
+                                        <p class="text-sm text-gray-300">TCP/IP, OSI Model, Network Security</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Year 4 -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4 flex items-center">
+                                    <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">4</span>
+                                    Fourth Year Curriculum
+                                </h4>
+                                <div class="ml-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Machine Learning</h5>
+                                        <p class="text-sm text-gray-300">Supervised & Unsupervised Learning</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Web Development</h5>
+                                        <p class="text-sm text-gray-300">Frontend & Backend Technologies</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Software Engineering</h5>
+                                        <p class="text-sm text-gray-300">SDLC, Agile Methodologies</p>
+                                    </div>
+                                    <div class="curriculum-item bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                                        <h5 class="font-semibold mb-2">Capstone Project</h5>
+                                        <p class="text-sm text-gray-300">End-to-end Software Development</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build Guide Screen -->
+        <div id="build-screen" class="hidden">
+            <div class="py-8">
+                <h2 class="text-3xl font-bold mb-2">How to Build EduLock App</h2>
+                <p class="text-gray-300 mb-8">Step-by-step guide to create your own educational screen lock application</p>
+                
+                <div class="space-y-6 mb-12">
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Project Setup</h3>
+                            <p class="text-gray-300">Create a new Android project using Android Studio. Choose Empty Activity template. Set up dependencies in build.gradle files for necessary libraries.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Design Lock Screen UI</h3>
+                            <p class="text-gray-300">Create a full-screen activity that displays educational questions. Implement a clean, intuitive interface with time indicators and progress tracking.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Implement Question Logic</h3>
+                            <p class="text-gray-300">Develop question database with multiple-choice options. Create logic to fetch random questions based on user preferences and subject selection.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Add Security Features</h3>
+                            <p class="text-gray-300">Implement device lock mechanisms. Create emergency unlock PIN system and secure authentication process to prevent unauthorized access.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">5</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Integrate Study Preferences</h3>
+                            <p class="text-gray-300">Allow users to select their course, semester, and preferred subjects. Customize question difficulty based on these settings.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 flex">
+                        <div class="step-number">6</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Testing & Optimization</h3>
+                            <p class="text-gray-300">Test the app thoroughly across different devices. Optimize performance and ensure smooth user experience during lock/unlock processes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Prerequisites</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-300">
+                        <li>Basic knowledge of Java/Kotlin programming</li>
+                        <li>Familiarity with Android development tools</li>
+                        <li>Understanding of XML layouts and UI components</li>
+                        <li>Knowledge of SQLite databases or Room persistence library</li>
+                        <li>Experience with AndroidManifest.xml configuration</li>
+                    </ul>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Screen -->
+        <div id="practice-screen" class="hidden">
+            <div class="py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Practice Questions</h2>
+                    <div class="flex space-x-4">
+                        <button onclick="showScreen('subjects')" class="text-primary hover:text-secondary transition-colors">
+                            <i class="fas fa-book mr-2"></i>Change Subject
+                        </button>
+                        <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Knowledge Form Section -->
+                <div class="knowledge-form bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-user-graduate mr-2 text-primary"></i> Student Knowledge Form
+                    </h3>
+                    <p class="text-gray-300 mb-6">Help us personalize your learning experience by providing information about your current studies</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm mb-2 font-medium">Current Institution</label>
+                            <input type="text" placeholder="University/College Name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2 font-medium">Current Course</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                                <option>B.Tech CSE</option>
+                                <option>B.Tech ECE</option>
+                                <option>B.Tech Mechanical</option>
+                                <option>B.Tech Civil</option>
+                                <option>B.Tech Electrical</option>
+                                <option>B.Tech Chemical</option>
+                                <option>B.Tech AI/ML</option>
+                                <option>B.Tech Biotechnology</option>
+                                <option>B.Tech Aerospace</option>
+                                <option>B.Tech Mining</option>
+                                <option>B.Tech Petroleum</option>
+                                <option>B.Tech Environmental</option>
+                                <option>B.Tech Materials</option>
+                                <option>B.Tech Food</option>
+                                <option>B.Tech Architecture</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2 font-medium">Branch/Stream</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                                <option>Computer Science & Engineering</option>
+                                <option>Electronics & Communication Engineering</option>
+                                <option>Mechanical Engineering</option>
+                                <option>Civil Engineering</option>
+                                <option>Electrical Engineering</option>
+                                <option>Chemical Engineering</option>
+                                <option>Artificial Intelligence & Machine Learning</option>
+                                <option>Biotechnology</option>
+                                <option>Aerospace Engineering</option>
+                                <option>Mining Engineering</option>
+                                <option>Petroleum Engineering</option>
+                                <option>Environmental Engineering</option>
+                                <option>Materials Engineering</option>
+                                <option>Food Technology</option>
+                                <option>Architecture</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2 font-medium">Current Semester</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                                <option>Semester 1</option>
+                                <option>Semester 2</option>
+                                <option>Semester 3</option>
+                                <option>Semester 4</option>
+                                <option>Semester 5</option>
+                                <option>Semester 6</option>
+                                <option>Semester 7</option>
+                                <option>Semester 8</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-sm mb-2 font-medium">Current Subjects</label>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Calculus</span>
+                            <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">Physics for Engineers</span>
+                            <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Python Programming</span>
+                            <span class="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm">Web Development Foundation</span>
+                            <span class="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm">Technical English</span>
+                            <span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm">Lab</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <button class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                            Save Knowledge Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subject Selection -->
+                <div id="subject-selection" class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Select Subject</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button onclick="selectSubject('mathematics')" class="subject-header bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-center">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-calculator text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold">Mathematics</h4>
+                        </button>
+                        <button onclick="selectSubject('physics')" class="subject-header bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-center">
+                            <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-flask text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold">Physics</h4>
+                        </button>
+                        <button onclick="selectSubject('chemistry')" class="subject-header bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-center">
+                            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-vial text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold">Chemistry</h4>
+                        </button>
+                        <button onclick="selectSubject('programming')" class="subject-header bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 hover:border-primary transition-all text-center">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-code text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold">Programming</h4>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Topic Selection -->
+                <div id="topic-selection" class="hidden bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Select Topic</h3>
+                    <div id="topics-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Topics will be populated here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div id="question-card" class="hidden bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8 question-card">
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <span class="font-bold">1</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">What is the partial derivative of f(x,y) = x²y + xy² with respect to x?</h3>
+                            <div class="text-sm text-gray-300">Topic: Calculus - Partial Differentiation</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <button class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg option-btn border border-gray-600 hover:border-primary transition-all">
+                            ∂f/∂x = 2xy + y²
+                        </button>
+                        <button class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg option-btn border border-gray-600 hover:border-primary transition-all">
+                            ∂f/∂x = x² + 2xy
+                        </button>
+                        <button class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg option-btn border border-gray-600 hover:border-primary transition-all">
+                            ∂f/∂x = 2x + 2y
+                        </button>
+                        <button class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg option-btn border border-gray-600 hover:border-primary transition-all">
+                            ∂f/∂x = xy + x²
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-300">
+                            <i class="fas fa-clock mr-2"></i>Time: 3 mins
+                        </div>
+                        <button class="bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            Submit Answer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="progress-bar" class="hidden mb-8">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>Progress</span>
+                        <span>1/10</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <!-- Emergency Unlock -->
+                <div id="emergency-unlock" class="hidden bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                    <h3 class="text-xl font-semibold mb-4">Emergency Unlock</h3>
+                    <p class="text-gray-300 mb-4">In case of emergency, use this PIN to unlock your device instantly</p>
+                    <div class="flex items-center space-x-4">
+                        <input type="password" placeholder="Enter Emergency PIN" class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                        <button class="bg-secondary hover:bg-accent text-white font-medium py-2 px-6 rounded-lg transition-colors" onclick="handleEmergencyUnlock()">
+                            Unlock
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="hidden">
+            <div class="py-8">
+                <h2 class="text-3xl font-bold mb-8">Settings</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Security Settings -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-shield-alt mr-2 text-primary"></i> Security
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span>Enable EduLock</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Require Password for Emergency</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Question Difficulty Level</span>
+                                <select class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 focus:outline-none focus:border-primary">
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Settings -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2 text-accent"></i> Emergency
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-2">Emergency PIN</label>
+                                <input type="password" placeholder="Enter new PIN" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">Confirm Emergency PIN</label>
+                                <input type="password" placeholder="Confirm PIN" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                            </div>
+                            <button class="w-full bg-secondary hover:bg-accent text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Save Emergency PIN
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Study Preferences -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-graduation-cap mr-2 text-green-400"></i> Study Preferences
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-2">Current Course</label>
+                                <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                                    <option>B.Tech CSE (AIML)</option>
+                                    <option>B.Tech CSE</option>
+                                    <option>B.Tech ECE</option>
+                                    <option>B.Tech Mechanical</option>
+                                    <option>B.Tech Civil</option>
+                                    <option>B.Tech Electrical</option>
+                                    <option>B.Tech Chemical</option>
+                                    <option>B.Tech Metallurgical</option>
+                                    <option>B.Tech Biotechnology</option>
+                                    <option>B.Tech Aerospace</option>
+                                    <option>B.Tech Mining</option>
+                                    <option>B.Tech Petroleum</option>
+                                    <option>B.Tech Environmental</option>
+                                    <option>B.Tech Materials</option>
+                                    <option>B.Tech Food</option>
+                                    <option>B.Tech Architecture</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">Current Semester</label>
+                                <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-primary">
+                                    <option>Semester 1</option>
+                                    <option>Semester 2</option>
+                                    <option>Semester 3</option>
+                                    <option>Semester 4</option>
+                                    <option>Semester 5</option>
+                                    <option>Semester 6</option>
+                                    <option>Semester 7</option>
+                                    <option>Semester 8</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">Preferred Subjects</label>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">Mathematics</span>
+                                    <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">Physics</span>
+                                    <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Chemistry</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Info -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-mobile-alt mr-2 text-blue-400"></i> Device Information
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Device Model:</span>
+                                <span>Android Device</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">App Version:</span>
+                                <span>1.0.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Last Updated:</span>
+                                <span>Oct 2023</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Questions Solved:</span>
+                                <span>247</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Tracker Screen -->
+        <div id="score-screen" class="hidden">
+            <div class="py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Score Tracker</h2>
+                    <div class="flex space-x-4">
+                        <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold">Emergency PIN Usage Analytics</h3>
+                        <div class="flex space-x-2">
+                            <button class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg" onclick="changeTimeRange('daily')">Daily</button>
+                            <button class="text-sm bg-primary hover:bg-secondary px-3 py-1 rounded-lg" onclick="changeTimeRange('weekly')">Weekly</button>
+                            <button class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg" onclick="changeTimeRange('monthly')">Monthly</button>
+                            <button class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg" onclick="changeTimeRange('yearly')">Yearly</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                            <div class="text-gray-300 text-sm">Today</div>
+                            <div class="text-2xl font-bold score-indicator" id="today-score">0</div>
+                            <div class="text-xs text-gray-400">Emergency PIN used</div>
+                        </div>
+                        <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                            <div class="text-gray-300 text-sm">This Week</div>
+                            <div class="text-2xl font-bold score-indicator" id="week-score">0</div>
+                            <div class="text-xs text-gray-400">Emergency PIN used</div>
+                        </div>
+                        <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                            <div class="text-gray-300 text-sm">This Month</div>
+                            <div class="text-2xl font-bold score-indicator" id="month-score">0</div>
+                            <div class="text-xs text-gray-400">Emergency PIN used</div>
+                        </div>
+                        <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                            <div class="text-gray-300 text-sm">This Year</div>
+                            <div class="text-2xl font-bold score-indicator" id="year-score">0</div>
+                            <div class="text-xs text-gray-400">Emergency PIN used</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h4 class="text-lg font-semibold mb-4">Usage History</h4>
+                        <div class="space-y-3 max-h-60 overflow-y-auto">
+                            <div class="flex justify-between items-center p-3 bg-gray-700/30 rounded-lg">
+                                <span>2 hours ago</span>
+                                <span class="text-red-400">Emergency PIN used</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-700/30 rounded-lg">
+                                <span>Yesterday</span>
+                                <span class="text-red-400">Emergency PIN used</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-700/30 rounded-lg">
+                                <span>2 days ago</span>
+                                <span class="text-red-400">Emergency PIN used</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-700/30 rounded-lg">
+                                <span>5 days ago</span>
+                                <span class="text-yellow-400">Normal unlock</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-700/30 rounded-lg">
+                                <span>Last week</span>
+                                <span class="text-green-400">No emergency usage</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                        <h4 class="text-lg font-semibold mb-3">Performance Analysis</h4>
+                        <div class="flex items-center mb-3">
+                            <div class="w-32 text-sm text-gray-300">Emergency PIN Limit:</div>
+                            <div class="flex-1 h-2 bg-gray-600 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500" style="width: 50%"></div>
+                            </div>
+                            <div class="w-16 text-right text-sm">3-4 times/day</div>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-red-400">Warning:</span> High emergency PIN usage detected. 
+                            <span class="text-yellow-400">This may indicate difficulty with subject mastery.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4">Subject Performance</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Mathematics</span>
+                                    <span class="text-red-400">High Emergency Uses</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Physics</span>
+                                    <span class="text-yellow-400">Medium Emergency Uses</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>Chemistry</span>
+                                    <span class="text-green-400">Low Emergency Uses</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-semibold mb-4">Tips to Reduce Emergency PIN Usage</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                <span>Solve more practice questions daily to improve understanding</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                <span>Focus on weak subjects using targeted practice</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                <span>Create a study schedule to avoid last-minute panic</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                <span>Use regular learning methods instead of shortcuts</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                <span>Review previous exam papers regularly</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="showScreen('home')" class="text-primary hover:text-secondary transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show different screens
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('[id$="-screen"]').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            
+            // Show selected screen
+            document.getElementById(`${screenName}-screen`).classList.remove('hidden');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Function to select program
+        function selectProgram(programId) {
+            const titleMap = {
+                'btech-cse': 'B.Tech Computer Science & Engineering',
+                'btech-aiml': 'B.Tech Artificial Intelligence & Machine Learning',
+                'btech-ece': 'B.Tech Electronics & Communication Engineering',
+                'btech-mech': 'B.Tech Mechanical Engineering',
+                'btech-civil': 'B.Tech Civil Engineering',
+                'btech-ee': 'B.Tech Electrical Engineering',
+                'btech-chem': 'B.Tech Chemical Engineering',
+                'btech-mme': 'B.Tech Metallurgical Engineering',
+                'btech-biotech': 'B.Tech Biotechnology Engineering',
+                'btech-aero': 'B.Tech Aerospace Engineering',
+                'btech-mining': 'B.Tech Mining Engineering',
+                'btech-petroleum': 'B.Tech Petroleum Engineering',
+                'btech-environ': 'B.Tech Environmental Engineering',
+                'btech-material': 'B.Tech Materials Engineering',
+                'btech-food': 'B.Tech Food Technology',
+                'btech-architecture': 'B.Tech Architecture Engineering'
+            };
+            
+            // Update program title
+            document.getElementById('program-title').textContent = titleMap[programId];
+            
+            // Show curriculum display
+            document.getElementById('curriculum-display').classList.remove('hidden');
+            
+            // Scroll to curriculum
+            document.getElementById('curriculum-display').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Function to select subject
+        function selectSubject(subject) {
+            // Hide subject selection
+            document.getElementById('subject-selection').classList.add('hidden');
+            
+            // Show topic selection
+            document.getElementById('topic-selection').classList.remove('hidden');
+            
+            // Populate topics based on subject
+            populateTopics(subject);
+            
+            // Show question card after a brief delay
+            setTimeout(() => {
+                document.getElementById('question-card').classList.remove('hidden');
+                document.getElementById('progress-bar').classList.remove('hidden');
+                document.getElementById('emergency-unlock').classList.remove('hidden');
+            }, 500);
+        }
+
+        // Function to populate topics
+        function populateTopics(subject) {
+            const topicsContainer = document.getElementById('topics-container');
+            topicsContainer.innerHTML = '';
+            
+            const topics = {
+                mathematics: [
+                    { name: "Partial Differentiation", description: "Derivatives of multivariable functions" },
+                    { name: "Determinants", description: "Properties and applications of matrices" },
+                    { name: "Gradients", description: "Directional derivatives and gradient vectors" },
+                    { name: "Integration", description: "Definite and indefinite integration techniques" },
+                    { name: "Series and Sequences", description: "Convergence, divergence, power series" },
+                    { name: "Vector Calculus", description: "Line integrals, surface integrals, vector fields" }
+                ],
+                physics: [
+                    { name: "Mechanics", description: "Kinematics, dynamics, work-energy theorem" },
+                    { name: "Waves", description: "Sound waves, electromagnetic waves, interference" },
+                    { name: "Thermodynamics", description: "Heat engines, entropy, laws of thermodynamics" },
+                    { name: "Electromagnetism", description: "Electric fields, magnetic fields, Maxwell equations" },
+                    { name: "Optics", description: "Reflection, refraction, wave optics" },
+                    { name: "Modern Physics", description: "Quantum mechanics, atomic structure" }
+                ],
+                chemistry: [
+                    { name: "Atomic Structure", description: "Bohr model, quantum numbers, electron configuration" },
+                    { name: "Chemical Bonding", description: "Ionic, covalent, metallic bonding" },
+                    { name: "Organic Chemistry", description: "Hydrocarbons, functional groups, reactions" },
+                    { name: "Chemical Kinetics", description: "Reaction rates, rate laws, catalysts" },
+                    { name: "Equilibrium", description: "Acid-base equilibrium, solubility product" },
+                    { name: "Periodic Properties", description: "Ionization energy, electronegativity, atomic radius" }
+                ],
+                programming: [
+                    { name: "Development Foundations", description: "Variables, data types, control structures" },
+                    { name: "Data Structures", description: "Arrays, linked lists, stacks, queues" },
+                    { name: "Algorithms", description: "Sorting, searching, recursion" },
+                    { name: "Object-Oriented Programming", description: "Classes, inheritance, polymorphism" },
+                    { name: "Database Concepts", description: "SQL basics, normalization, transactions" },
+                    { name: "Web Development", description: "HTML, CSS, JavaScript fundamentals" }
+                ]
+            };
+            
+            const subjectTopics = topics[subject] || [];
+            
+            subjectTopics.forEach((topic, index) => {
+                const topicCard = document.createElement('div');
+                topicCard.className = 'topic-card bg-gray-700/50 hover:bg-gray-700 rounded-lg p-4 border border-gray-600 cursor-pointer';
+                topicCard.innerHTML = `
+                    <h4 class="font-semibold mb-1">${topic.name}</h4>
+                    <p class="text-sm text-gray-300">${topic.description}</p>
+                `;
+                topicCard.onclick = () => {
+                    // Simulate selecting a topic
+                    alert(`Selected topic: ${topic.name}`);
+                };
+                topicsContainer.appendChild(topicCard);
+            });
+        }
+
+        // Handle emergency unlock
+        function handleEmergencyUnlock() {
+            const emergencyPinInput = document.querySelector('#emergency-unlock input[type="password"]');
+            const enteredPin = emergencyPinInput.value;
+            
+            // In real app, you would verify against stored PIN
+            if (enteredPin.length >= 4) {  // Simple validation
+                // Simulate incrementing the emergency count
+                updateEmergencyCounts();
+                alert("Device unlocked successfully!");
+                emergencyPinInput.value = "";
+            } else {
+                alert("Please enter a valid emergency PIN");
+            }
+        }
+
+        // Update emergency counts for demonstration
+        function updateEmergencyCounts() {
+            const today = document.getElementById('today-score');
+            const week = document.getElementById('week-score');
+            const month = document.getElementById('month-score');
+            const year = document.getElementById('year-score');
+
+            let todayCount = parseInt(today.textContent) || 0;
+            let weekCount = parseInt(week.textContent) || 0;
+            let monthCount = parseInt(month.textContent) || 0;
+            let yearCount = parseInt(year.textContent) || 0;
+
+            todayCount++;
+            weekCount++;
+            monthCount++;
+            yearCount++;
+
+            today.textContent = todayCount;
+            week.textContent = weekCount;
+            month.textContent = monthCount;
+            year.textContent = yearCount;
+
+            // Update score indicator classes
+            updateScoreIndicators(todayCount, weekCount, monthCount, yearCount);
+        }
+
+        // Update score indicator classes based on usage
+        function updateScoreIndicators(today, week, month, year) {
+            const indicators = [
+                { element: document.getElementById('today-score'), value: today },
+                { element: document.getElementById('week-score'), value: week },
+                { element: document.getElementById('month-score'), value: month },
+                { element: document.getElementById('year-score'), value: year }
+            ];
+
+            indicators.forEach(({ element, value }) => {
+                element.classList.remove('score-high', 'score-medium', 'score-low');
+                
+                if (value > 4) {
+                    element.classList.add('score-high');
+                } else if (value > 2) {
+                    element.classList.add('score-medium');
+                } else {
+                    element.classList.add('score-low');
+                }
+            });
+        }
+
+        // Change time range for analytics view
+        function changeTimeRange(range) {
+            // Remove active class from all buttons
+            document.querySelectorAll('#score-screen .flex button').forEach(btn => {
+                btn.classList.remove('bg-primary', 'hover:bg-secondary');
+                btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+            });
+
+            // Add active class to clicked button
+            event.target.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+            event.target.classList.add('bg-primary', 'hover:bg-secondary');
+
+            // Update analytics for the selected range
+            // In a real app, this would fetch historical data based on the selected period
+            console.log(`Displaying ${range} analytics`);
+        }
+
+        // Initialize with home screen
+        document.addEventListener('DOMContentLoaded', function() {
+            showScreen('home');
+            
+            // Initialize dummy data for score tracking
+            updateScoreIndicators(2, 8, 25, 312);
+        });
+    </script>
+</body>
+</html>
